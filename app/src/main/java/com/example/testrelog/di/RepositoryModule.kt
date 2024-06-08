@@ -1,11 +1,15 @@
 package com.example.testrelog.di
 
+import com.example.testrelog.data.local.AuthRepositoryImpl
+import com.example.testrelog.domain.repository.AuthRepository
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-@Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
-
+@Module
+interface RepositoryModule {
+    @Binds
+    fun provideAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 }
