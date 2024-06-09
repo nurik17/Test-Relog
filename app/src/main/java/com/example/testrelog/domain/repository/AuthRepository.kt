@@ -1,6 +1,6 @@
 package com.example.testrelog.domain.repository
 
-import com.example.testrelog.data.models.RegistrationBody
+import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.model.RegistrationResponse
 
 interface AuthRepository {

@@ -2,8 +2,8 @@ package com.example.testrelog.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testrelog.data.models.AuthResult
-import com.example.testrelog.data.models.RegistrationBody
+import com.example.testrelog.domain.data.models.AuthResult
+import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.useCase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

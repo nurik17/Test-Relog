@@ -1,4 +1,4 @@
-package com.example.testrelog.data.local
+package com.example.testrelog.domain.data.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

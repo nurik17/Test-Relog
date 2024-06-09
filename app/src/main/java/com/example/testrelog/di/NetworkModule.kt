@@ -1,7 +1,7 @@
 package com.example.testrelog.di
 
 import com.example.testrelog.BuildConfig
-import com.example.testrelog.data.remote.RelogApi
+import com.example.testrelog.domain.data.remote.RelogApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

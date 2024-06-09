@@ -1,7 +1,7 @@
-package com.example.testrelog.data.local
+package com.example.testrelog.domain.data.local
 
-import com.example.testrelog.data.models.RegistrationBody
-import com.example.testrelog.data.remote.RelogApi
+import com.example.testrelog.domain.data.models.RegistrationBody
+import com.example.testrelog.domain.data.remote.RelogApi
 import com.example.testrelog.domain.model.RegistrationResponse
 import com.example.testrelog.domain.repository.AuthRepository
 import javax.inject.Inject

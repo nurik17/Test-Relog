@@ -1,6 +1,6 @@
 package com.example.testrelog.di
 
-import com.example.testrelog.data.local.AuthRepositoryImpl
+import com.example.testrelog.domain.data.local.AuthRepositoryImpl
 import com.example.testrelog.domain.repository.AuthRepository
 import dagger.Binds
 import dagger.Module

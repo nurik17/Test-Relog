@@ -2,11 +2,11 @@ package com.example.testrelog.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testrelog.data.models.AuthResult
-import com.example.testrelog.data.models.RegistrationBody
+import com.example.testrelog.domain.data.local.LoginState
+import com.example.testrelog.domain.data.models.AuthResult
+import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.useCase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,11 +21,14 @@ class LoginViewModel @Inject constructor(
         MutableStateFlow(LoginUiState.Initial)
     val loginUiState = _loginUiState.asStateFlow()
 
-    fun login(loginBody: RegistrationBody) =
-        viewModelScope.launch(Dispatchers.IO) {
-            _loginUiState.value = LoginUiState.Loading
-            val result = loginUseCase.login(loginBody)
+    private val _loginValueUiState = MutableStateFlow(LoginState())
+    val loginValueUiState = _loginValueUiState.asStateFlow()
 
+    fun login(loginBody: RegistrationBody) {
+        _loginUiState.value = LoginUiState.Loading
+
+        viewModelScope.launch {
+            val result = loginUseCase.login(loginBody)
             result.collect { authResult ->
                 when (authResult) {
                     is AuthResult.Success -> _loginUiState.value =
@@ -36,4 +39,13 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onEmailChange(newEmail: String) {
+        _loginValueUiState.value = _loginValueUiState.value.copy(email = newEmail)
+    }
+
+    fun onPasswordChange(newPassword: String) {
+        _loginValueUiState.value = _loginValueUiState.value.copy(password = newPassword)
+    }
 }

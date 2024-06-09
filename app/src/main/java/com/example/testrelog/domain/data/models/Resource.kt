@@ -1,4 +1,4 @@
-package com.example.testrelog.data.models
+package com.example.testrelog.domain.data.models
 
 import com.example.testrelog.domain.model.RegistrationResponse
 

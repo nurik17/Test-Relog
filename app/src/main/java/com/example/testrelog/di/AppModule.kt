@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.example.testrelog.data.local.AuthPreferences
+import com.example.testrelog.domain.data.local.AuthPreferences
 import com.example.testrelog.utils.Constant.AUTH_PREFERENCES
 import dagger.Module
 import dagger.Provides

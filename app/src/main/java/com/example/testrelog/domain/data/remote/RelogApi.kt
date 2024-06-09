@@ -1,6 +1,6 @@
-package com.example.testrelog.data.remote
+package com.example.testrelog.domain.data.remote
 
-import com.example.testrelog.data.models.RegistrationBody
+import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.model.RegistrationResponse
 import retrofit2.http.Body
 
