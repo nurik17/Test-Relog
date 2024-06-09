@@ -2,6 +2,7 @@ package com.example.testrelog.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.testrelog.domain.data.local.RegisterState
 import com.example.testrelog.domain.data.models.AuthResult
 import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.useCase.RegisterUseCase
@@ -20,7 +21,10 @@ class RegisterViewModel @Inject constructor(
         MutableStateFlow(RegisterUiState.Initial)
     val registerUiState = _registerUiState.asStateFlow()
 
-    fun register(registrationBody: RegistrationBody) =
+    private val _registerUiValue = MutableStateFlow(RegisterState())
+    val registerUiValue = _registerUiValue.asStateFlow()
+
+    fun register(registrationBody: RegistrationBody) {
         viewModelScope.launch {
             _registerUiState.value = RegisterUiState.Loading
             val result = registerUseCase.register(registrationBody)
@@ -35,4 +39,13 @@ class RegisterViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onEmailChange(newEmail: String) {
+        _registerUiValue.value = _registerUiValue.value.copy(email = newEmail)
+    }
+
+    fun onPasswordChange(newPassword: String) {
+        _registerUiValue.value = _registerUiValue.value.copy(password = newPassword)
+    }
 }

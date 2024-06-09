@@ -28,7 +28,11 @@ fun NavGraph(
             )
         }
         composable(route = AppNavigation.Screen.Register.route){
-            RegisterScreen()
+            RegisterScreen(
+                navigateToLogin = {
+                    navController.navigate(AppNavigation.Screen.Login.route)
+                }
+            )
         }
         composable(route = AppNavigation.Screen.Home.route){
             HomeScreen()

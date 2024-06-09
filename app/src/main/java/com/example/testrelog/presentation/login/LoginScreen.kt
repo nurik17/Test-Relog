@@ -94,6 +94,7 @@ fun LoginScreenContent(
 ) {
 
     var showPasswordValue by remember { mutableStateOf(value = false) }
+    var confirmShowPasswordValue by remember { mutableStateOf(value = false) }
 
     Column(
         modifier = Modifier
@@ -135,6 +136,7 @@ fun LoginScreenContent(
             value = password,
             hint = stringResource(id = R.string.your_password),
             leadingIcon = R.drawable.ic_message,
+            showPassword = showPasswordValue,
             trailingIcon = {
                 if (showPasswordValue) {
                     IconButton(onClick = { showPasswordValue = false }) {

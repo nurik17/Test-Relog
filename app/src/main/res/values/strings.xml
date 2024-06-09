@@ -9,5 +9,8 @@
     <string name="enter">Кіру</string>
     <string name="follow"> Тіркелу</string>
     <string name="dont_have_account">Аккаунтыныз жоқ па?</string>
+    <string name="fill_the_information"> Деректерді толтырыңыз</string>
+    <string name="repeat_password">Құпия сөзді қайталаңыз</string>
+    <string name="do_you_have_account">Сізде аккаунт бар ма?</string>
 
 </resources>
