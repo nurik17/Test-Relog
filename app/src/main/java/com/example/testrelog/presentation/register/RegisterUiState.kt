@@ -6,5 +6,5 @@ sealed interface RegisterUiState {
     object Initial : RegisterUiState
     object Loading : RegisterUiState
     data class Success(val registrationResponse: RegistrationResponse) : RegisterUiState
-    data class Error(val exception: Throwable) : RegisterUiState
+    data class Error(val error: Message) : RegisterUiState
 }

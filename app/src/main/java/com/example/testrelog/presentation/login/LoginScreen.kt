@@ -1,6 +1,8 @@
 package com.example.testrelog.presentation.login
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,14 +14,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,9 +36,11 @@ import com.example.testrelog.common.CustomButton
 import com.example.testrelog.common.ProgressBlock
 import com.example.testrelog.common.RegistrationTextField
 import com.example.testrelog.common.SpannableNavigateText
+import com.example.testrelog.common.UiEvents
 import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.ui.theme.Grey900
 import com.example.testrelog.ui.theme.typography
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginScreen(
@@ -44,6 +52,21 @@ fun LoginScreen(
     val uiState = viewModel.loginUiState.collectAsStateWithLifecycle()
     val currentState = uiState.value
     val loginValueUiState = viewModel.loginValueUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.NavigateEvent -> {
+                   navigateToHome()
+                }
+                is UiEvents.ToastEvent ->{
+                    Toast.makeText(context,event.message,Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (currentState) {
@@ -73,11 +96,28 @@ fun LoginScreen(
             }
 
             is LoginUiState.Success -> {
-                navigateToHome()
+
             }
 
             is LoginUiState.Error -> {
-
+                LoginScreenContent(
+                    email = loginValueUiState.value.email,
+                    password = loginValueUiState.value.password,
+                    onEmailValueChanged = {
+                        viewModel.onEmailChange(it)
+                    },
+                    onPasswordValueChanged = {
+                        viewModel.onPasswordChange(it)
+                    },
+                    onEnterButtonClick = {
+                        val loginBody = RegistrationBody(
+                            email = loginValueUiState.value.email,
+                            password = loginValueUiState.value.password
+                        )
+                        viewModel.login(loginBody)
+                    },
+                    navigation = navigateToRegister
+                )
             }
         }
     }
@@ -93,8 +133,8 @@ fun LoginScreenContent(
     navigation:() ->Unit
 ) {
 
-    var showPasswordValue by remember { mutableStateOf(value = false) }
-    var confirmShowPasswordValue by remember { mutableStateOf(value = false) }
+    var showPasswordValue by rememberSaveable { mutableStateOf(value = false) }
+    var confirmShowPasswordValue by rememberSaveable { mutableStateOf(value = false) }
 
     Column(
         modifier = Modifier

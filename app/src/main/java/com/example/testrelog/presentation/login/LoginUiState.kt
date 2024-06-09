@@ -6,5 +6,5 @@ sealed interface LoginUiState {
     object Initial : LoginUiState
     object Loading : LoginUiState
     data class Success(val registrationResponse: RegistrationResponse) : LoginUiState
-    data class Error(val exception: Throwable) : LoginUiState
+    data class Error(val message: String) : LoginUiState
 }

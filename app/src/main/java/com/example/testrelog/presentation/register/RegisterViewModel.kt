@@ -2,12 +2,15 @@ package com.example.testrelog.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.testrelog.common.UiEvents
 import com.example.testrelog.domain.data.local.RegisterState
 import com.example.testrelog.domain.data.models.AuthResult
 import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.domain.useCase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,19 +27,27 @@ class RegisterViewModel @Inject constructor(
     private val _registerUiValue = MutableStateFlow(RegisterState())
     val registerUiValue = _registerUiValue.asStateFlow()
 
+    private val _eventFlow = MutableSharedFlow<UiEvents>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     fun register(registrationBody: RegistrationBody) {
         viewModelScope.launch {
-            _registerUiState.value = RegisterUiState.Loading
-            val result = registerUseCase.register(registrationBody)
+            try {
+                _registerUiState.value = RegisterUiState.Loading
+                val result = registerUseCase.register(registrationBody)
 
-            result.collect { authResult ->
-                when (authResult) {
-                    is AuthResult.Success -> _registerUiState.value =
-                        RegisterUiState.Success(authResult.registrationResponse)
+                result.collect { authResult ->
+                    when (authResult) {
+                        is AuthResult.Success -> _registerUiState.value =
+                            RegisterUiState.Success(authResult.registrationResponse)
 
-                    is AuthResult.Error -> _registerUiState.value =
-                        RegisterUiState.Error(authResult.exception)
+                        is AuthResult.Error -> _registerUiState.value =
+                            RegisterUiState.Error(authResult.exception)
+                    }
                 }
+            }catch (e: Exception){
+                _registerUiState.value = RegisterUiState.Error(e.message.toString())
+                _eventFlow.emit(UiEvents.ToastEvent(message = e.message.toString()))
             }
         }
     }
@@ -46,6 +57,9 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun onPasswordChange(newPassword: String) {
+        _registerUiValue.value = _registerUiValue.value.copy(password = newPassword)
+    }
+    fun onConfirmPasswordChange(newPassword: String) {
         _registerUiValue.value = _registerUiValue.value.copy(password = newPassword)
     }
 }

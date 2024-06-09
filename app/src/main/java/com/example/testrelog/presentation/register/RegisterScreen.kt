@@ -1,5 +1,6 @@
 package com.example.testrelog.presentation.register
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +12,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,9 +32,11 @@ import com.example.testrelog.common.CustomButton
 import com.example.testrelog.common.ProgressBlock
 import com.example.testrelog.common.RegistrationTextField
 import com.example.testrelog.common.SpannableNavigateText
+import com.example.testrelog.common.UiEvents
 import com.example.testrelog.domain.data.models.RegistrationBody
 import com.example.testrelog.ui.theme.Grey900
 import com.example.testrelog.ui.theme.typography
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RegisterScreen(
@@ -42,6 +47,20 @@ fun RegisterScreen(
     val uiState = viewModel.registerUiState.collectAsStateWithLifecycle()
     val currentState = uiState.value
     val registerUiValue = viewModel.registerUiValue.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.NavigateEvent -> {
+                    navigateToLogin()
+                }
+                is UiEvents.ToastEvent ->{
+                    Toast.makeText(context,event.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         when (currentState) {
@@ -63,7 +82,10 @@ fun RegisterScreen(
                         )
                         viewModel.register(registrationBody)
                     },
-                    navigation = navigateToLogin
+                    navigation = navigateToLogin,
+                    onConfirmPasswordValueChanged = {
+                        viewModel.onConfirmPasswordChange(it)
+                    }
                 )
             }
 
@@ -76,7 +98,28 @@ fun RegisterScreen(
             }
 
             is RegisterUiState.Error -> {
-                // Display error message
+                RegisterScreenContent(
+                    email = registerUiValue.value.email,
+                    password = registerUiValue.value.password,
+                    confirmPassword = registerUiValue.value.confirmPassword,
+                    onEmailValueChanged = {
+                        viewModel.onEmailChange(it)
+                    },
+                    onPasswordValueChanged = {
+                        viewModel.onPasswordChange(it)
+                    },
+                    onRegisterButtonClick = {
+                        val registrationBody = RegistrationBody(
+                            email = registerUiValue.value.email,
+                            password = registerUiValue.value.password
+                        )
+                        viewModel.register(registrationBody)
+                    },
+                    navigation = navigateToLogin,
+                    onConfirmPasswordValueChanged = {
+                        viewModel.onConfirmPasswordChange(it)
+                    },
+                )
             }
         }
     }
@@ -89,8 +132,9 @@ fun RegisterScreenContent(
     confirmPassword: String,
     onEmailValueChanged: (String) -> Unit,
     onPasswordValueChanged: (String) -> Unit,
+    onConfirmPasswordValueChanged: (String) -> Unit,
     onRegisterButtonClick:() ->Unit,
-    navigation:() ->Unit
+    navigation:() ->Unit,
 ) {
     var showPasswordValue by remember { mutableStateOf(value = false) }
     var confirmShowPasswordValue by remember { mutableStateOf(value = false) }
@@ -163,8 +207,8 @@ fun RegisterScreenContent(
             color = Grey900
         )
         RegistrationTextField(
-            onValueChanged = onPasswordValueChanged,
-            value = password,
+            onValueChanged = onConfirmPasswordValueChanged,
+            value = confirmPassword,
             showPassword = showPasswordValue,
             hint = stringResource(id = R.string.your_password),
             leadingIcon = R.drawable.ic_message,
